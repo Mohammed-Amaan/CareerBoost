@@ -42,7 +42,7 @@ def read_resume():
                 maintext = text.split("\n")
                 create_resume_dict(maintext, resume_headers)
             except:
-                pass
+                print(Exception)
         elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             text = docx2txt.process(uploaded_file)
             x = text.split("\n")
