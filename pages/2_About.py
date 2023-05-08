@@ -1,5 +1,5 @@
 import streamlit as st
-st.markdown("<h1 style='color: Cyan;'>About Us</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color: #d66d22;'>About Us</h1>", unsafe_allow_html=True)
 
 st.write(
     "Our application is designed to revolutionize the job search process by leveraging the power of ChatGPT API. By "
