@@ -185,8 +185,8 @@ def build_roadmap(templist):
     config = Config(width=750,
                     height=450,
                     directed=True,
-                    physics=True,
-                    hierarchical=False,
+                    physics=False,
+                    hierarchical=True,
                     )
 
     return_value = agraph(nodes=nodes,
