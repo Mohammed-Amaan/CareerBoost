@@ -64,7 +64,7 @@ def build_roadmap(templist):
         if i != len(templist) - 1:
             edges.append(Edge(source=templist[i], label='next', target=templist[i + 1]))
     config = Config(width=2000,
-                    height=2000,
+                    height=1000,
                     directed=True,
                     physics=False,
                     hierarchical=True,
@@ -78,6 +78,7 @@ def build_roadmap(templist):
 st.set_page_config(
     page_title="CareerBoost",
     page_icon="🚀",
+    layout="wide"
 )
 
 st.title("Career Advisor using OpenAI GPT-3")
