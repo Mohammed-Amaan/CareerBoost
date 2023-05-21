@@ -4,3 +4,4 @@ streamlit_agraph == 0.0.45
 PyMuPDF == 1.22.2
 docx2txt == 0.8
 PyPDF2 == 3.0.1
+langchain
