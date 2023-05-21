@@ -9,7 +9,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
-
+import os
 
 # Declaring variables and lists used in the code
 resume_headers = [
@@ -71,15 +71,14 @@ def read_resume():
             maintext = str(uploaded_file.read(), "utf-8")
             create_resume_dict(maintext, resume_headers)
         elif uploaded_file.type == "application/pdf":
+            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
             # Using LLM model to get skills and experience of candidate (Applied only to PDF)
             try:
-                reader = PdfReader(uploaded_file)
-
-                raw_text = ""
-                for i, page in enumerate(reader.pages):
-                    text = page.extract_text()
-                    if text:
-                        raw_text += text
+                doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+                text = ""
+                for page in doc:
+                    text += page.get_text("text")
+                raw_text = text.split("\n")
 
                 text_splitter = CharacterTextSplitter(
                     separator="\n",
@@ -87,7 +86,7 @@ def read_resume():
                     chunk_overlap=200,
                     length_function=len,
                 )
-                texts = text_splitter.split_text(raw_text)
+                texts = raw_text
 
                 # Download embeddings from OpenAI
                 embeddings = OpenAIEmbeddings()
@@ -102,8 +101,8 @@ def read_resume():
                     input_documents=docs, question=query
                 )
                 result(st.session_state.skills_resume)
-            except:
-                print(Exception)
+            except Exception as e:
+                print(e)
         elif (
             uploaded_file.type
             == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
