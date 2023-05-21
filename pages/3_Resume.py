@@ -139,7 +139,7 @@ def get_job_titles(content):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "user", "content": f'{content}. Only give the specific points in new lines and no other text'}
+            {"role": "user", "content": f'{content}.'}
         ]
     )
 
@@ -163,7 +163,7 @@ def set_stage(stage):
 def set_stage_Resume(stage):
     st.session_state.stage = stage
     if 'skills' in st.session_state:
-        content = f"These are the skills of a person, {st.session_state.skills}. Can you recommend some suitable jobs?"
+        content = f"Recommend suitable jobs for someone with skills in {st.session_state.skills}"
         st.session_state.job_titles = get_job_titles(content)
         st.session_state.job_titles.insert(0, '')
 
