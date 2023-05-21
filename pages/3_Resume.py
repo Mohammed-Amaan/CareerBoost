@@ -197,6 +197,7 @@ def build_roadmap(templist):
 st.set_page_config(
     page_title="CareerBoost",
     page_icon="🚀",
+    layout="wide"
 )
 
 st.title("Career Advisor using OpenAI GPT-3")
