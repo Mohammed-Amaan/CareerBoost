@@ -4,14 +4,46 @@ import streamlit as st
 import openai
 from streamlit_agraph import agraph, Node, Edge, Config
 from PyPDF2 import PdfReader
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import ElasticVectorSearch, Pinecone, Weaviate, FAISS
+from langchain.chains.question_answering import load_qa_chain
+from langchain.llms import OpenAI
+
 
 # Declaring variables and lists used in the code
-resume_headers = ["WORK EXPERIENCE", "JOB EXPERIENCE", "DUTY EXPERIENCE", "EXPERIENCE", "PROFESSIONAL EXPERIENCE",
-                  "CAREER SUMMARY", "PROFESSION SUMMARY", "CAREER OBJECTIVE", "PROFESSION OBJECTIVE", "EDUCATION",
-                  "TRAINING", "SCHOOLING", "Relevant Courses", "Courses", "Appropriate Courses", "SKILLS", "TOP SKILLS",
-                  "TECHNICAL SKILLS", "EXPERTISE", "CERTIFICATIONS", "UNIVERSITY PROJECTS", "CERTIFICATES", "PROJECTS",
-                  "ASSIGNMENTS", "OTHER", "ADDITIONAL", "ADDITIONAL INFORMATION", "CONTACT",
-                  "HONORS-AWARDS", "LANGUAGES"]
+resume_headers = [
+    "WORK EXPERIENCE",
+    "JOB EXPERIENCE",
+    "DUTY EXPERIENCE",
+    "EXPERIENCE",
+    "PROFESSIONAL EXPERIENCE",
+    "CAREER SUMMARY",
+    "PROFESSION SUMMARY",
+    "CAREER OBJECTIVE",
+    "PROFESSION OBJECTIVE",
+    "EDUCATION",
+    "TRAINING",
+    "SCHOOLING",
+    "Relevant Courses",
+    "Courses",
+    "Appropriate Courses",
+    "SKILLS",
+    "TOP SKILLS",
+    "TECHNICAL SKILLS",
+    "EXPERTISE",
+    "CERTIFICATIONS",
+    "UNIVERSITY PROJECTS",
+    "CERTIFICATES",
+    "PROJECTS",
+    "ASSIGNMENTS",
+    "OTHER",
+    "ADDITIONAL",
+    "ADDITIONAL INFORMATION",
+    "CONTACT",
+    "HONORS-AWARDS",
+    "LANGUAGES",
+]
 
 
 # Add text between start and end of two headers onto lists
@@ -26,7 +58,12 @@ def add_val(strList, mainList, s, e):
 # Reading contents of resume according to file type
 def read_resume():
     #   st.markdown("<h4 style='color: White;'>Enter your details</h4>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload Your Resume", type=['txt', 'docx', 'pdf'], on_change=set_stage, args=(1,))
+    uploaded_file = st.file_uploader(
+        "Upload Your Resume",
+        type=["txt", "docx", "pdf"],
+        on_change=set_stage,
+        args=(1,),
+    )
     # if st.button("Display Skills", on_click=set_stage, args=(1,)):
     if uploaded_file is not None:
         # File Details
@@ -34,16 +71,43 @@ def read_resume():
             maintext = str(uploaded_file.read(), "utf-8")
             create_resume_dict(maintext, resume_headers)
         elif uploaded_file.type == "application/pdf":
+            # Using LLM model to get skills and experience of candidate (Applied only to PDF)
             try:
-                doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
-                text = ""
-                for page in doc:
-                    text += page.get_text("text")
-                maintext = text.split("\n")
-                create_resume_dict(maintext, resume_headers)
+                reader = PdfReader(uploaded_file)
+
+                raw_text = ""
+                for i, page in enumerate(reader.pages):
+                    text = page.extract_text()
+                    if text:
+                        raw_text += text
+
+                text_splitter = CharacterTextSplitter(
+                    separator="\n",
+                    chunk_size=1000,
+                    chunk_overlap=200,
+                    length_function=len,
+                )
+                texts = text_splitter.split_text(raw_text)
+
+                # Download embeddings from OpenAI
+                embeddings = OpenAIEmbeddings()
+
+                docsearch = FAISS.from_texts(texts, embeddings)
+
+                chain = load_qa_chain(OpenAI(), chain_type="stuff")
+
+                query = "Give the technical skills and number of years of experience with the field of work in the provided resume"
+                docs = docsearch.similarity_search(query)
+                st.session_state.skills_resume = chain.run(
+                    input_documents=docs, question=query
+                )
+                result(st.session_state.skills_resume)
             except:
                 print(Exception)
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        elif (
+            uploaded_file.type
+            == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ):
             text = docx2txt.process(uploaded_file)
             x = text.split("\n")
             templist = []
@@ -94,43 +158,95 @@ def add_resume_val_to_list(dict, x):
             e = len(x) - 1
         header_name = dict[k]["text"]
 
-        if header_name == "WORK EXPERIENCE" or header_name == "JOB EXPERIENCE" or header_name == "DUTY EXPERIENCE" or \
-                header_name == "EXPERIENCE" or header_name == "PROFESSIONAL EXPERIENCE":
+        if (
+            header_name == "WORK EXPERIENCE"
+            or header_name == "JOB EXPERIENCE"
+            or header_name == "DUTY EXPERIENCE"
+            or header_name == "EXPERIENCE"
+            or header_name == "PROFESSIONAL EXPERIENCE"
+        ):
             add_val(WE, x, s, e)
-        elif header_name == "CAREER SUMMARY" or header_name == "PROFESSION SUMMARY" or \
-                header_name == "CAREER OBJECTIVE" or header_name == "PROFESSION OBJECTIVE":
+        elif (
+            header_name == "CAREER SUMMARY"
+            or header_name == "PROFESSION SUMMARY"
+            or header_name == "CAREER OBJECTIVE"
+            or header_name == "PROFESSION OBJECTIVE"
+        ):
             add_val(CS, x, s, e)
-        elif header_name == "EDUCATION" or header_name == "TRAINING" or header_name == "SCHOOLING":
+        elif (
+            header_name == "EDUCATION"
+            or header_name == "TRAINING"
+            or header_name == "SCHOOLING"
+        ):
             add_val(E, x, s, e)
-        elif header_name == "SKILLS" or header_name == "EXPERTISE" or header_name == "TECHNICAL SKILLS" or \
-                header_name == "TOP SKILLS":
+        elif (
+            header_name == "SKILLS"
+            or header_name == "EXPERTISE"
+            or header_name == "TECHNICAL SKILLS"
+            or header_name == "TOP SKILLS"
+        ):
             add_val(S, x, s, e)
         elif header_name == "CERTIFICATIONS" or header_name == "CERTIFICATES":
             add_val(C, x, s, e)
-        elif header_name == "PROJECTS" or header_name == "ASSIGNMENTS" or header_name == "UNIVERSITY PROJECTS":
+        elif (
+            header_name == "PROJECTS"
+            or header_name == "ASSIGNMENTS"
+            or header_name == "UNIVERSITY PROJECTS"
+        ):
             add_val(P, x, s, e)
-        elif header_name == "Courses" or header_name == "Relevant Courses" or header_name == "Appropriate Courses":
+        elif (
+            header_name == "Courses"
+            or header_name == "Relevant Courses"
+            or header_name == "Appropriate Courses"
+        ):
             add_val(RC, x, s, e)
-        elif header_name == "OTHER" or header_name == "ADDITIONAL" or header_name == "ADDITIONAL INFORMATION" or \
-                header_name == "CONTACT" or header_name == "HONOR-AWARDS" or header_name == "LANGUAGES":
+        elif (
+            header_name == "OTHER"
+            or header_name == "ADDITIONAL"
+            or header_name == "ADDITIONAL INFORMATION"
+            or header_name == "CONTACT"
+            or header_name == "HONOR-AWARDS"
+            or header_name == "LANGUAGES"
+        ):
             add_val(O, x, s, e)
 
-    st.session_state.skills = ', '.join(S)
+    st.session_state.skills = ", ".join(S)
     # st.write(st.session_state.skills)
     if st.session_state.skills:
         if st.session_state.stage > 0:
-            st.button("Display Jobs", on_click=set_stage_Resume, args=(2,))
+            st.button("Display Jobs", on_click=set_stage_Resume_docx, args=(2,))
             if st.session_state.stage > 1:
                 st.selectbox(
-                    'Select a job?',
-                    st.session_state.job_titles, on_change=set_stage_Roadmap, args=(3,), key='JobTitle',
+                    "Select a job?",
+                    st.session_state.job_titles,
+                    on_change=set_stage_Roadmap,
+                    args=(3,),
+                    key="JobTitle",
                 )
                 if st.session_state.stage > 2:
+                    st.header("Roadmap")
                     build_roadmap(st.session_state.roadmap)
-                st.button('Reset', on_click=set_stage, args=(0,))
+                st.button("Reset", on_click=set_stage, args=(0,))
     else:
         st.write("Skills not found !!!")
         st.write("Please make sure you have a separate section for Skills")
+
+
+def result(prompt):
+    if st.session_state.stage > 0:
+        st.button("Display Jobs", on_click=set_stage_Resume_pdf, args=(2,))
+        if st.session_state.stage > 1:
+            st.selectbox(
+                "Select a job?",
+                st.session_state.job_titles,
+                on_change=set_stage_Roadmap,
+                args=(3,),
+                key="JobTitle",
+            )
+            if st.session_state.stage > 2:
+                st.header("Roadmap")
+                build_roadmap(st.session_state.roadmap)
+            st.button("Reset", on_click=set_stage, args=(0,))
 
 
 def get_job_titles(content):
@@ -139,8 +255,8 @@ def get_job_titles(content):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "user", "content": f'{content}. Give the points in new lines'}
-        ]
+            {"role": "user", "content": f"{content}. Give the points in new lines"}
+        ],
     )
 
     chat_response = completion.choices[0].message.content
@@ -149,28 +265,43 @@ def get_job_titles(content):
     return job_titles
 
 
-if 'stage' not in st.session_state and 'skills' not in st.session_state and 'job_titles' not in st.session_state and 'roadmap' not in st.session_state:
+if (
+    "stage" not in st.session_state
+    and "skills" not in st.session_state
+    and "job_titles" not in st.session_state
+    and "roadmap" not in st.session_state
+    and "skills_resume" not in st.session_state
+):
     st.session_state.stage = 0
-    st.session_state.skills = ''
+    st.session_state.skills = ""
     st.session_state.job_titles = []
     st.session_state.roadmap = []
+    st.session_state.skills_resume = ""
 
 
 def set_stage(stage):
     st.session_state.stage = stage
 
 
-def set_stage_Resume(stage):
+def set_stage_Resume_docx(stage):
     st.session_state.stage = stage
-    if 'skills' in st.session_state:
+    if "skills" in st.session_state:
         content = f"Recommend suitable jobs for someone with skills in {st.session_state.skills}"
         st.session_state.job_titles = get_job_titles(content)
-        st.session_state.job_titles.insert(0, '')
+        st.session_state.job_titles.insert(0, "")
+
+
+def set_stage_Resume_pdf(stage):
+    st.session_state.stage = stage
+    if "skills" in st.session_state:
+        content = f"Recommend suitable jobs for someone with skills and experience as: {st.session_state.skills_resume}"
+        st.session_state.job_titles = get_job_titles(content)
+        st.session_state.job_titles.insert(0, "")
 
 
 def set_stage_Roadmap(stage):
     st.session_state.stage = stage
-    if 'JobTitle' in st.session_state:
+    if "JobTitle" in st.session_state:
         content = f"Give steps to become a {st.session_state['JobTitle']}"
         st.session_state.roadmap = get_job_titles(content)
 
@@ -179,26 +310,25 @@ def build_roadmap(templist):
     nodes = []
     edges = []
     for i in range(len(templist)):
-        nodes.append(Node(id=templist[i], size=25, shape="square", color='#3264a8', label= f'{i+1}'))
+        nodes.append(
+            Node(
+                id=templist[i], size=25, shape="square", color="#3264a8", label=f"{i+1}"
+            )
+        )
         if i != len(templist) - 1:
-            edges.append(Edge(source=templist[i], label='next', target=templist[i + 1]))
-    config = Config(width=1500,
-                    height=1000,
-                    directed=True,
-                    physics=False,
-                    hierarchical=True,
-                    )
+            edges.append(Edge(source=templist[i], label="next", target=templist[i + 1]))
+    config = Config(
+        width=1500,
+        height=1000,
+        directed=True,
+        physics=False,
+        hierarchical=True,
+    )
 
-    return_value = agraph(nodes=nodes,
-                          edges=edges,
-                          config=config)
+    return_value = agraph(nodes=nodes, edges=edges, config=config)
 
 
-st.set_page_config(
-    page_title="CareerBoost",
-    page_icon="🚀",
-    layout="wide"
-)
+st.set_page_config(page_title="CareerBoost", page_icon="🚀", layout="wide")
 
 st.title("Career Advisor using OpenAI GPT-3")
 st.sidebar.success("Select a page above.")

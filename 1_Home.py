@@ -119,5 +119,6 @@ if st.session_state.stage > 0:
                 st.session_state.job_titles, on_change=set_stage_Roadmap, args=(3,), key='JobTitle',
             )
             if st.session_state.stage > 2:
+                st.header("Roadmap")
                 build_roadmap(st.session_state.roadmap)
             st.button('Reset', on_click=set_stage, args=(0,))
