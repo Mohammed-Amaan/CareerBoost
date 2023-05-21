@@ -11,6 +11,10 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 import os
 
+
+api_key = st.secrets["OPENAI_KEY"]
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
+
 # Declaring variables and lists used in the code
 resume_headers = [
     "WORK EXPERIENCE",
@@ -71,7 +75,7 @@ def read_resume():
             maintext = str(uploaded_file.read(), "utf-8")
             create_resume_dict(maintext, resume_headers)
         elif uploaded_file.type == "application/pdf":
-            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
+            # os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
             # Using LLM model to get skills and experience of candidate (Applied only to PDF)
             try:
                 doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
@@ -254,7 +258,7 @@ def result():
 
 
 def get_job_titles(content):
-    openai.api_key = st.secrets["OPENAI_KEY"]
+    
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
