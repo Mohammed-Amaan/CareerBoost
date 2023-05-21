@@ -37,6 +37,9 @@ def set_stage_Employeed(stage):
                       f"Can you recommend some suitable jobs? "
             st.session_state.job_titles = get_job_titles(content)
             st.session_state.job_titles.insert(0, '')
+            for i in st.session_state.job_titles:
+                if len(i) < 5:
+                    st.session_state.job_titles.remove(i);
 
 
 def set_stage_Student(stage):
@@ -46,6 +49,9 @@ def set_stage_Student(stage):
             content = f"I am a {st.session_state['Discipline']} {st.session_state['EmpStatus'].lower()}. Can you recommend some suitable jobs?"
             st.session_state.job_titles = get_job_titles(content)
             st.session_state.job_titles.insert(0, '')
+            for i in st.session_state.job_titles:
+                if len(i) < 5:
+                    st.session_state.job_titles.remove(i);
 
 
 def set_stage_Roadmap(stage):
@@ -53,6 +59,9 @@ def set_stage_Roadmap(stage):
     if 'JobTitle' in st.session_state:
         content = f"Give steps to become a {st.session_state['JobTitle']}"
         st.session_state.roadmap = get_job_titles(content)
+        for i in st.session_state.roadmap:
+            if len(i) < 5:
+                st.session_state.roadmap.remove(i);
 
 
 
@@ -63,7 +72,7 @@ def build_roadmap(templist):
         nodes.append(Node(id=templist[i], size=25, shape="square", color='#3264a8', label= f'{i+1}'))
         if i != len(templist) - 1:
             edges.append(Edge(source=templist[i], label='next', target=templist[i + 1]))
-    config = Config(width=2000,
+    config = Config(width=1500,
                     height=1000,
                     directed=True,
                     physics=False,
