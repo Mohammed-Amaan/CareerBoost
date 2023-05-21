@@ -71,7 +71,7 @@ def read_resume():
             maintext = str(uploaded_file.read(), "utf-8")
             create_resume_dict(maintext, resume_headers)
         elif uploaded_file.type == "application/pdf":
-            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
+            os.environ["OPENAI_API_KEY"] = "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"
             # Using LLM model to get skills and experience of candidate (Applied only to PDF)
             try:
                 doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
@@ -95,12 +95,17 @@ def read_resume():
 
                 chain = load_qa_chain(OpenAI(), chain_type="stuff")
 
-                query = "Give the technical skills and number of years of experience with the field of work in the provided resume"
+                query = "Give the technical skills in the provided resume"
                 docs = docsearch.similarity_search(query)
-                st.session_state.skills_resume = chain.run(
+                st.session_state.skills = chain.run(
                     input_documents=docs, question=query
                 )
-                result(st.session_state.skills_resume)
+                query = "Give the number of years of experience with the field of work in the provided resume"
+                docs = docsearch.similarity_search(query)
+                st.session_state.experience = chain.run(
+                    input_documents=docs, question=query
+                )
+                result()
             except Exception as e:
                 print(e)
         elif (
@@ -231,14 +236,14 @@ def add_resume_val_to_list(dict, x):
         st.write("Please make sure you have a separate section for Skills")
 
 
-def result(prompt):
+def result():
     if st.session_state.stage > 0:
         st.button("Display Jobs", on_click=set_stage_Resume_pdf, args=(2,))
         if st.session_state.stage > 1:
             st.selectbox(
                 "Select a job?",
                 st.session_state.job_titles,
-                on_change=set_stage_Roadmap,
+                on_change=set_stage_Roadmap_pdf,
                 args=(3,),
                 key="JobTitle",
             )
@@ -249,7 +254,7 @@ def result(prompt):
 
 
 def get_job_titles(content):
-    openai.api_key = st.secrets["OPENAI_KEY"]
+    openai.api_key = "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"
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -269,13 +274,13 @@ if (
     and "skills" not in st.session_state
     and "job_titles" not in st.session_state
     and "roadmap" not in st.session_state
-    and "skills_resume" not in st.session_state
+    and "experience" not in st.session_state
 ):
     st.session_state.stage = 0
     st.session_state.skills = ""
     st.session_state.job_titles = []
     st.session_state.roadmap = []
-    st.session_state.skills_resume = ""
+    st.session_state.experience = ""
 
 
 def set_stage(stage):
@@ -293,7 +298,7 @@ def set_stage_Resume_docx(stage):
 def set_stage_Resume_pdf(stage):
     st.session_state.stage = stage
     if "skills" in st.session_state:
-        content = f"Recommend suitable jobs for someone with skills and experience as: {st.session_state.skills_resume}"
+        content = f"Recommend suitable jobs for someone with skills {st.session_state.skills} and experience as {st.session_state.experience} "
         st.session_state.job_titles = get_job_titles(content)
         st.session_state.job_titles.insert(0, "")
 
@@ -305,17 +310,27 @@ def set_stage_Roadmap(stage):
         st.session_state.roadmap = get_job_titles(content)
 
 
+def set_stage_Roadmap_pdf(stage):
+    st.session_state.stage = stage
+    if "JobTitle" in st.session_state:
+        content = f"Give steps to become a {st.session_state['JobTitle']} with {st.session_state.experience}"
+        st.session_state.roadmap = get_job_titles(content)
+
+
 def build_roadmap(templist):
     nodes = []
     edges = []
+    temp = []
     for i in range(len(templist)):
-        nodes.append(
-            Node(
-                id=templist[i], size=25, shape="square", color="#3264a8", label=f"{i+1}"
+        if templist[i] not in temp:
+            temp.append(templist[i])
+            nodes.append(
+                Node(
+                    id=templist[i], size=25, shape="square", color="#3264a8", label=f"{i+1}"
+                )
             )
-        )
-        if i != len(templist) - 1:
-            edges.append(Edge(source=templist[i], label="next", target=templist[i + 1]))
+            if i != len(templist) - 1:
+                edges.append(Edge(source=templist[i], label="next", target=templist[i + 1]))
     config = Config(
         width=1500,
         height=1000,
