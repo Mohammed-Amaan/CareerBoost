@@ -71,7 +71,7 @@ def read_resume():
             maintext = str(uploaded_file.read(), "utf-8")
             create_resume_dict(maintext, resume_headers)
         elif uploaded_file.type == "application/pdf":
-            os.environ["OPENAI_API_KEY"] = "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"
+            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_KEY"]
             # Using LLM model to get skills and experience of candidate (Applied only to PDF)
             try:
                 doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
@@ -254,7 +254,7 @@ def result():
 
 
 def get_job_titles(content):
-    openai.api_key = "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"
+    openai.api_key = st.secrets["OPENAI_KEY"]
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -344,7 +344,7 @@ def build_roadmap(templist):
 
 st.set_page_config(page_title="CareerBoost", page_icon="🚀", layout="wide")
 
-st.title("Career Advisor using OpenAI GPT-3")
+st.title("Career Advisor using OpenAI GPT-3.5-turbo")
 st.sidebar.success("Select a page above.")
 
 read_resume()
