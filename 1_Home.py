@@ -63,8 +63,8 @@ def build_roadmap(templist):
         nodes.append(Node(id=templist[i], size=25, shape="square", color='#3264a8', label= f'{i+1}'))
         if i != len(templist) - 1:
             edges.append(Edge(source=templist[i], label='next', target=templist[i + 1]))
-    config = Config(width=800,
-                    height=1000,
+    config = Config(width=2000,
+                    height=2000,
                     directed=True,
                     physics=False,
                     hierarchical=True,
