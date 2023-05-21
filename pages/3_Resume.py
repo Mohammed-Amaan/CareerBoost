@@ -139,7 +139,7 @@ def get_job_titles(content):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "user", "content": f'{content}.Give the points in new lines'}
+            {"role": "user", "content": f'{content}. Give the points in new lines'}
         ]
     )
 
