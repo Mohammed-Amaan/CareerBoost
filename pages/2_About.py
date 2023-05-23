@@ -1,4 +1,6 @@
 import streamlit as st
+
+st.set_page_config(page_title="CareerBoost", page_icon="🚀")
 st.markdown("<h1 style='color: #d66d22;'>About Us</h1>", unsafe_allow_html=True)
 
 st.write(
@@ -9,4 +11,5 @@ st.write(
     "opportunities along the way. Whether you're looking to switch careers or acquire new skills to advance in your "
     "current field, our platform is the perfect tool to help you achieve your goals. With its intuitive interface and "
     "advanced algorithms, our application is the ultimate resource for anyone seeking a fulfilling and rewarding "
-    "career.")
+    "career."
+)
