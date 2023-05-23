@@ -234,7 +234,10 @@ def add_resume_val_to_list(dict, x):
                     key="JobTitle",
                 )
                 if st.session_state.stage > 2:
-                    st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<h4 style='color: #d66d22;'>Roadmap</h4>",
+                        unsafe_allow_html=True,
+                    )
                     build_roadmap(st.session_state.roadmap)
                 st.button("Reset", on_click=set_stage, args=(0,))
     else:
@@ -254,7 +257,9 @@ def result():
                 key="JobTitle",
             )
             if st.session_state.stage > 2:
-                st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
+                st.markdown(
+                    "<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True
+                )
                 build_roadmap(st.session_state.roadmap)
             st.button("Reset", on_click=set_stage, args=(0,))
 
@@ -363,6 +368,9 @@ def set_stage_Roadmap(stage):
     if "JobTitle" in st.session_state:
         content = f"Give steps to become a {st.session_state['JobTitle']}"
         st.session_state.roadmap = get_job_titles(content)
+        for i in st.session_state.roadmap:
+            if len(i) < 5:
+                st.session_state.roadmap.remove(i)
 
 
 def set_stage_Roadmap_pdf(stage):
@@ -370,6 +378,9 @@ def set_stage_Roadmap_pdf(stage):
     if "JobTitle" in st.session_state:
         content = f"Give steps to become a {st.session_state['JobTitle']} with {st.session_state.experience}"
         st.session_state.roadmap = get_job_titles(content)
+        for i in st.session_state.roadmap:
+            if len(i) < 5:
+                st.session_state.roadmap.remove(i)
 
 
 def open_linkedin_job_listings(job_keywords, location):
@@ -412,7 +423,10 @@ def build_roadmap(templist):
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     set_stage(4)
     if st.session_state.stage > 3:
-        st.markdown("<h4 style='color: #d66d22;'>Learn in demand skills through these popular courses</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<h4 style='color: #d66d22;'>Learn in demand skills through these popular courses</h4>",
+            unsafe_allow_html=True,
+        )
         st.write(
             "Click the button below to display recommended courses for your selected job."
         )
@@ -421,7 +435,10 @@ def build_roadmap(templist):
         st.write(temp_courses)
         set_stage(5)
         if st.session_state.stage > 4:
-            st.markdown("<h4 style='color: #d66d22;'>Gain competitive edge by acheiving these certifications</h4>", unsafe_allow_html=True)
+            st.markdown(
+                "<h4 style='color: #d66d22;'>Gain competitive edge by acheiving these certifications</h4>",
+                unsafe_allow_html=True,
+            )
             st.write(
                 "Click the button below to display recommended certifications for your selected job."
             )
@@ -432,7 +449,10 @@ def build_roadmap(templist):
             st.write(temp_courses)
             set_stage(6)
             if st.session_state.stage > 5:
-                st.markdown("<h4 style='color: #d66d22;'>Crack your next interview with these questions</h4>", unsafe_allow_html=True)
+                st.markdown(
+                    "<h4 style='color: #d66d22;'>Crack your next interview with these questions</h4>",
+                    unsafe_allow_html=True,
+                )
                 st.write(
                     "Click the button below to display possible interview questions for your selected job."
                 )
@@ -445,7 +465,10 @@ def build_roadmap(templist):
                 st.write(temp_courses)
                 set_stage(7)
                 if st.session_state.stage > 6:
-                    st.markdown("<h4 style='color: #d66d22;'>Find out your next expected salary</h4>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<h4 style='color: #d66d22;'>Find out your next expected salary</h4>",
+                        unsafe_allow_html=True,
+                    )
                     st.write(
                         "Click the button below to display recommended salary for your selected job."
                     )
@@ -454,7 +477,10 @@ def build_roadmap(templist):
                     st.write(temp_courses)
                     set_stage(8)
                     if st.session_state.stage > 7:
-                        st.markdown("<h4 style='color: #d66d22;'>Discover your next level in the corporate ladder</h4>", unsafe_allow_html=True)
+                        st.markdown(
+                            "<h4 style='color: #d66d22;'>Discover your next level in the corporate ladder</h4>",
+                            unsafe_allow_html=True,
+                        )
                         st.write(
                             "Click the button below to display the corporate ladder for your selected job."
                         )
@@ -467,7 +493,10 @@ def build_roadmap(templist):
                         st.write(temp_courses)
                         set_stage(9)
                         if st.session_state.stage > 8:
-                            st.markdown("<h4 style='color: #d66d22;'>View available jobs related to your expertise</h4>", unsafe_allow_html=True)
+                            st.markdown(
+                                "<h4 style='color: #d66d22;'>View available jobs related to your expertise</h4>",
+                                unsafe_allow_html=True,
+                            )
                             job_keywords = st.text_input("Enter your job title")
                             location = st.text_input(
                                 "Enter your preferred stay of work"
@@ -478,7 +507,10 @@ def build_roadmap(templist):
 
 st.set_page_config(page_title="CareerBoost", page_icon="🚀", layout="wide")
 
-st.markdown("<h1 style='color: #d66d22;'>Career Advisor using OpenAI GPT-3</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='color: #d66d22;'>Career Advisor using OpenAI GPT-3</h1>",
+    unsafe_allow_html=True,
+)
 # st.sidebar.success("Select a page above.")
 
 read_resume()

@@ -97,10 +97,7 @@ def set_stage_Employeed(stage):
         or EmpStatus == "Searching For Jobs"
     ):
         if "Profession" in st.session_state and "Exp" in st.session_state:
-            content = (
-                f"I am a {st.session_state['Profession'].lower()} with {st.session_state['Exp']} years of experience. "
-                f"Can you recommend some suitable jobs? "
-            )
+            content = f"Recommend suitable job titles for a {st.session_state['Profession'].lower()} with {st.session_state['Exp']} years of experience. "
             st.session_state.job_titles = get_job_titles(content)
             st.session_state.job_titles.insert(0, "")
             # for i in st.session_state.job_titles:
@@ -112,7 +109,7 @@ def set_stage_Student(stage):
     st.session_state.stage = stage
     if "EmpStatus" in st.session_state and EmpStatus == "Student":
         if "Discipline" in st.session_state:
-            content = f"I am a {st.session_state['Discipline']} {st.session_state['EmpStatus'].lower()}. Can you recommend some suitable jobs?"
+            content = f"Recommend suitable job titles for a {st.session_state['Discipline']} {st.session_state['EmpStatus'].lower()}."
             st.session_state.job_titles = get_job_titles(content)
             st.session_state.job_titles.insert(0, "")
             # for i in st.session_state.job_titles:
@@ -161,7 +158,10 @@ def build_roadmap_student_employed(templist):
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     set_stage(4)
     if st.session_state.stage > 3:
-        st.markdown("<h4 style='color: #d66d22;'>Gain competitive edge by acheiving these certifications</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<h4 style='color: #d66d22;'>Gain competitive edge by acheiving these certifications</h4>",
+            unsafe_allow_html=True,
+        )
         st.write(
             "Click the button below to display recommended certifications for your selected job."
         )
@@ -172,7 +172,10 @@ def build_roadmap_student_employed(templist):
         st.write(temp_courses)
         set_stage(5)
         if st.session_state.stage > 6:
-            st.markdown("<h4 style='color: #d66d22;'>Discover your next level in the corporate ladder</h4>", unsafe_allow_html=True)
+            st.markdown(
+                "<h4 style='color: #d66d22;'>Discover your next level in the corporate ladder</h4>",
+                unsafe_allow_html=True,
+            )
             st.write(
                 "Click the button below to display the corporate ladder for your selected job."
             )
@@ -207,7 +210,10 @@ def build_roadmap_searching_for_jobs(templist):
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     set_stage(4)
     if st.session_state.stage > 3:
-        st.markdown("<h4 style='color: #d66d22;'>Crack your next interview with these questions</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<h4 style='color: #d66d22;'>Crack your next interview with these questions</h4>",
+            unsafe_allow_html=True,
+        )
         st.write(
             "Click the button below to display possible interview questions for your selected job."
         )
@@ -220,7 +226,10 @@ def build_roadmap_searching_for_jobs(templist):
         st.write(temp_courses)
         set_stage(5)
         if st.session_state.stage > 4:
-            st.markdown("<h4 style='color: #d66d22;'>Find out your next expected salary</h4>", unsafe_allow_html=True)
+            st.markdown(
+                "<h4 style='color: #d66d22;'>Find out your next expected salary</h4>",
+                unsafe_allow_html=True,
+            )
             st.write(
                 "Click the button below to display recommended salary for your selected job."
             )
@@ -229,7 +238,10 @@ def build_roadmap_searching_for_jobs(templist):
             st.write(temp_courses)
             set_stage(6)
             if st.session_state.stage > 5:
-                st.markdown("<h4 style='color: #d66d22;'>View available jobs related to your expertise</h4>", unsafe_allow_html=True)
+                st.markdown(
+                    "<h4 style='color: #d66d22;'>View available jobs related to your expertise</h4>",
+                    unsafe_allow_html=True,
+                )
                 job_keywords = st.text_input("Enter your job title")
                 location = st.text_input("Enter your preferred stay of work")
                 if location and job_keywords:
@@ -258,7 +270,10 @@ def build_roadmap_student(templist):
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     set_stage(4)
     if st.session_state.stage > 3:
-        st.markdown("<h4 style='color: #d66d22;'>Learn in demand skills through these popular courses</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<h4 style='color: #d66d22;'>Learn in demand skills through these popular courses</h4>",
+            unsafe_allow_html=True,
+        )
         st.write(
             "Click the button below to display recommended courses for your selected job."
         )
@@ -268,7 +283,10 @@ def build_roadmap_student(templist):
 
 
 st.set_page_config(page_title="CareerBoost", page_icon="🚀", layout="wide")
-st.markdown("<h1 style='color: #d66d22;'>Career Advisor using OpenAI GPT-3</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='color: #d66d22;'>Career Advisor using OpenAI GPT-3</h1>",
+    unsafe_allow_html=True,
+)
 st.sidebar.success("Select a page above.")
 
 EmpStatus = st.radio(
@@ -297,7 +315,10 @@ if st.session_state.stage > 0:
                     key="JobTitle",
                 )
                 if st.session_state.stage > 2:
-                    st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<h4 style='color: #d66d22;'>Roadmap</h4>",
+                        unsafe_allow_html=True,
+                    )
                     build_roadmap_student_employed(st.session_state.roadmap)
                 st.button("Reset", on_click=set_stage, args=(0,))
     elif EmpStatus == "Searching For Jobs":
@@ -317,7 +338,10 @@ if st.session_state.stage > 0:
                     key="JobTitle",
                 )
                 if st.session_state.stage > 2:
-                    st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<h4 style='color: #d66d22;'>Roadmap</h4>",
+                        unsafe_allow_html=True,
+                    )
                     build_roadmap_searching_for_jobs(st.session_state.roadmap)
                 st.button("Reset", on_click=set_stage, args=(0,))
     elif EmpStatus == "Student":
@@ -337,6 +361,8 @@ if st.session_state.stage > 0:
                 key="JobTitle",
             )
             if st.session_state.stage > 2:
-                st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
+                st.markdown(
+                    "<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True
+                )
                 build_roadmap_student(st.session_state.roadmap)
             st.button("Reset", on_click=set_stage, args=(0,))
