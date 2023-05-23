@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(page_title="CareerBoost", page_icon="🚀")
-st.markdown("<h1 style='color: #d66d22;'>About Us</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color: #d66d22;'>About CareerBoost</h1>", unsafe_allow_html=True)
 
 st.write("""
 Welcome to our revolutionary job search platform! Our application is designed to transform the way you navigate the job market by harnessing the power of the ChatGPT API. With our advanced algorithms and intuitive interface, we are here to guide you towards a fulfilling and rewarding career.
