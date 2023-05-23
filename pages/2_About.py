@@ -6,7 +6,7 @@ st.markdown("<h1 style='color: #d66d22;'>About CareerBoost</h1>", unsafe_allow_h
 st.write("""
 Welcome to our revolutionary job search platform! Our application is designed to transform the way you navigate the job market by harnessing the power of the ChatGPT API. With our advanced algorithms and intuitive interface, we are here to guide you towards a fulfilling and rewarding career.
 
-**Resume Page**
+**Resume Page:**
 The first step on your journey begins with our Resume Page. Here, you can upload your CV or resume, and our platform will analyze it to extract your skills. This powerful feature allows us to gain deep insights into your expertise and career background.
 Based on the skills extracted from your resume, our platform generates personalized job recommendations that align with your career aspirations. 
 
