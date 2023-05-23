@@ -234,7 +234,7 @@ def add_resume_val_to_list(dict, x):
                     key="JobTitle",
                 )
                 if st.session_state.stage > 2:
-                    st.header("Roadmap")
+                    st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
                     build_roadmap(st.session_state.roadmap)
                 st.button("Reset", on_click=set_stage, args=(0,))
     else:
@@ -254,7 +254,7 @@ def result():
                 key="JobTitle",
             )
             if st.session_state.stage > 2:
-                st.header("Roadmap")
+                st.markdown("<h4 style='color: #d66d22;'>Roadmap</h4>", unsafe_allow_html=True)
                 build_roadmap(st.session_state.roadmap)
             st.button("Reset", on_click=set_stage, args=(0,))
 
@@ -412,7 +412,7 @@ def build_roadmap(templist):
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     set_stage(4)
     if st.session_state.stage > 3:
-        st.header("Learn in demand skills through these popular courses")
+        st.markdown("<h4 style='color: #d66d22;'>Learn in demand skills through these popular courses</h4>", unsafe_allow_html=True)
         st.write(
             "Click the button below to display recommended courses for your selected job."
         )
@@ -421,7 +421,7 @@ def build_roadmap(templist):
         st.write(temp_courses)
         set_stage(5)
         if st.session_state.stage > 4:
-            st.header("Gain competitive edge by acheiving these certifications")
+            st.markdown("<h4 style='color: #d66d22;'>Gain competitive edge by acheiving these certifications</h4>", unsafe_allow_html=True)
             st.write(
                 "Click the button below to display recommended certifications for your selected job."
             )
@@ -432,7 +432,7 @@ def build_roadmap(templist):
             st.write(temp_courses)
             set_stage(6)
             if st.session_state.stage > 5:
-                st.header("Crack your next interview with these questions")
+                st.markdown("<h4 style='color: #d66d22;'>Crack your next interview with these questions</h4>", unsafe_allow_html=True)
                 st.write(
                     "Click the button below to display possible interview questions for your selected job."
                 )
@@ -445,7 +445,7 @@ def build_roadmap(templist):
                 st.write(temp_courses)
                 set_stage(7)
                 if st.session_state.stage > 6:
-                    st.header("Find out your next expected salary")
+                    st.markdown("<h4 style='color: #d66d22;'>Find out your next expected salary</h4>", unsafe_allow_html=True)
                     st.write(
                         "Click the button below to display recommended salary for your selected job."
                     )
@@ -454,7 +454,7 @@ def build_roadmap(templist):
                     st.write(temp_courses)
                     set_stage(8)
                     if st.session_state.stage > 7:
-                        st.header("Discover your next level in the corporate ladder")
+                        st.markdown("<h4 style='color: #d66d22;'>Discover your next level in the corporate ladder</h4>", unsafe_allow_html=True)
                         st.write(
                             "Click the button below to display the corporate ladder for your selected job."
                         )
@@ -467,7 +467,7 @@ def build_roadmap(templist):
                         st.write(temp_courses)
                         set_stage(9)
                         if st.session_state.stage > 8:
-                            st.header("View available jobs related to your expertise")
+                            st.markdown("<h4 style='color: #d66d22;'>View available jobs related to your expertise</h4>", unsafe_allow_html=True)
                             job_keywords = st.text_input("Enter your job title")
                             location = st.text_input(
                                 "Enter your preferred stay of work"
