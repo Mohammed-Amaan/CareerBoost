@@ -62,7 +62,7 @@ def summarize_pdf(num_sentences):
         summary = extractive_summarization(text, num_sentences)
         st.markdown(f"<h5> {summary}</h5>", unsafe_allow_html=True)
         st.markdown(
-            "### Include these skills in your resume to get noticed by recruiters!!!",
+            "### Include these skills in your resume to get noticed by recruiters!",
             unsafe_allow_html=True,
         )
 
